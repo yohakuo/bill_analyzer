@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+    <title>{{ title }} - 账单分析器</title>
+    {% else %}
+    <title>欢迎来到您的专属账单分析器！</title>
+    {% endif %}
+</head>
+
+<body>
+    <h1>你好啊, {{ user.username }}!</h1>
+    <h2>请上传账单文件（Excel/Csv）</h2>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="bill_file">
+        <button type="submit">上传</button>
+    </form>
+    <!-- {% for post in posts %}
+    <div>
+        <p>{{ post.author.username }} says:<b> {{ post.body }}</b></p>
+    </div>
+    {% endfor %} -->
+</body>
+
+</html>
