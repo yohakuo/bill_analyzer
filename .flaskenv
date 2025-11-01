@@ -1,1 +1,2 @@
 FLASK_APP=hello.py
+NO_PROXY=192.168.121.57
