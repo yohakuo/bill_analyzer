@@ -1,7 +1,7 @@
 ## 快速使用
 ```
 #设置一个环境变量`FLASK_APP` 来指向你的应用
-$env:FLASK_APP = "microblog.py"
+$env:FLASK_APP = "hello.py"
 #运行
 flask run
 ```
