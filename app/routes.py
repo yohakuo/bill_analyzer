@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 
 from app import app
 from src.ai_helper import get_ai_suggestion
-from src.analysis import analyze_bill_data
+from src.analysis import process_and_analyze_data
 
 
 # 首页路由
@@ -41,9 +41,12 @@ def upload_file():
         print(f"文件 {filename} 保存到{file_path}")
 
         try:
-            total, categories = analyze_bill_data(file_path)
-            categories_text = categories.to_string()
-            suggestion = get_ai_suggestion(total, categories_text)
+            analysis_report = process_and_analyze_data(file_path)
+            if analysis_report is None:
+                print("[routes.py] 分析失败: process_and_analyze_data 返回了 None")
+                return "分析失败，可能是文件格式不受支持或'时间'列无法解析。"
+
+            suggestion = get_ai_suggestion(analysis_report)
 
             return f"""
             <h1>账单分析完成！</h1>
@@ -52,8 +55,6 @@ def upload_file():
             <br>
             <a href="/">返回上传新文件</a>
             """
-
-            return f"分析成功！总支出: {total:.2f} 元。"
 
         except Exception as e:
             print(f"[routes.py] 分析失败: {e}")

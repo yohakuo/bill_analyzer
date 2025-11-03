@@ -10,28 +10,48 @@ from openai import OpenAI
 client = OpenAI(base_url="http://192.168.121.57:11434/v1", api_key="local-qwen3")
 
 
-def get_ai_suggestion(total_spending, categories_text):
+def get_ai_suggestion(analysis_report):
     """
     根据账单分析结果，调用 AI 模型生成理财建议。
     """
     print("正在请求 AI 分析...")
+    analysis_report["start_date"]
+    analysis_report["end_date"]
+    analysis_report["total_days"]
+    # 趋势粒度
+    analysis_report["trend_granularity"]
+    analysis_report["spending_trend_str"]
+    # 总体数据
+    analysis_report["total_spending"]
+    analysis_report["category_spending_top5_str"]
+    analysis_report["top_5_transactions_str"]
 
-    # --- 设计"提示词 (Prompt)" ---
-    prompt = f"""你是一个专业的个人理财顾问。请根据下面的账单数据，直接给出友善的理财建议。
+    prompt = """
+    你是一个专业的个人理财顾问，任务按照下面的步骤执行：
+    1.基于“总体数据”，分析总支出和主要支出项。包含这笔支出的时间范围，支出前五名是哪些分类；
+    2.基于“趋势数据”，分析消费波动和关键事件。
+    3.最后，请根据这两部分分析，给我 3 条最关键、最具体的省钱建议。
+    
+    输出格式：
+    1.开头使用'你好啊！'
+    2.语气必须专业、友善、鼓励，直接对用户说话（用"你"）。
+    3.使用标题来组织你的回复，使其清晰易读。
 
-重要要求：
-- 你的回复必须直接以"你好呀！"开头，不能有任何其他文字
-- 绝对不要展示分析过程、思考步骤或任何解释性文字
-- 不要说"我来分析一下"、"根据数据"等话语
-- 直接给出建议，就像朋友聊天一样自然
-- 不要包含任何元标签或格式标记
+    ---
+    [账单特征分析报告]
+    ### 1. 总体数据 (用于总体分析)
+    账单时间范围: 从 {start_date} 到 {end_date} (共 {total_days} 天)
+    期间总支出: {total:.2f} 元
+    支出前 5 多的分类:{categories_str}
 
-账单数据：
-本月总支出：{total_spending:.2f} 元
-各分类支出：
-{categories_text}
-
-请直接给出建议："你好呀！"""
+    ### 2. 趋势数据 (用于趋势分析)
+    分析粒度: {granularity} (按{ '周' if granularity == 'Weekly' else '月' }汇总)
+    支出趋势:{trend_str}
+    期间 Top 5 最大单笔支出:{top_trans_str}
+    ---
+    
+    [你的分析与建议]
+    """
 
     try:
         chat_completion = client.chat.completions.create(
@@ -44,11 +64,11 @@ def get_ai_suggestion(total_spending, categories_text):
             model="qwen3:8b",
         )
 
-        suggestion = chat_completion.choices[0].message.content
+        chat_completion.choices[0].message.content
 
-        if "你好呀！" in suggestion:
-            suggestion = "你好呀！" + suggestion.split("你好呀！", 1)[-1]
-        return suggestion
+        # if "你好呀！" in suggestion:
+        #     suggestion = "你好呀！" + suggestion.split("你好呀！", 1)[-1]
+        # return suggestion
 
     except Exception as e:
         print(f"AI 调用失败: {e}")
